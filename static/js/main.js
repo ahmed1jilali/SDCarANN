@@ -20,7 +20,7 @@ if (localStorage.getItem("bestBrain")) {
   }
 }
 
-const traffic = generateTraffic(10);
+const traffic = generateTraffic(20);
 
 animate();
 
@@ -28,7 +28,7 @@ function animate(time) {
   //__update_traffic
   for (let i = 0; i < traffic.length; i++) {
     traffic[i].update(road.borders, []);
-    if (bestCar.y - traffic[i].y < -350) {
+    if (bestCar.y - traffic[i].y < -2000) {
       generateTrafficCarRandomPosition(traffic[i])
     }
   }
