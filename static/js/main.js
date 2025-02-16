@@ -1,30 +1,17 @@
 const carCanvas = document.getElementById("carCanvas");
-carCanvas.clientWidth = 200;
 const carCtx = carCanvas.getContext("2d");
+carCtx.canvas.width = 200;
 
 const networkCanvas = document.getElementById("networkCanvas");
-networkCanvas.clientWidth = 500;
 const networkCtx = networkCanvas.getContext("2d");
+networkCtx.canvas.width = window.innerHeight - 300;
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
-// const traffic = [
-//   new Car(road.getLaneCenter(0), -100, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY"),
-//   new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY"),
-// ];
-const traffic = generateTraffic(20);
 
-// const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI", 7);
-const cars = generateCars(500);
+const cars = generateCars(300);
 let bestCar = cars[0];
 
 if (localStorage.getItem("bestBrain")) {
-  console.log("hello")
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
     if (i != 0) {
@@ -33,15 +20,20 @@ if (localStorage.getItem("bestBrain")) {
   }
 }
 
+const traffic = generateTraffic(10);
 
 animate();
 
 function animate(time) {
+  //__update_traffic
   for (let i = 0; i < traffic.length; i++) {
     traffic[i].update(road.borders, []);
+    if (bestCar.y - traffic[i].y < -350) {
+      generateTrafficCarRandomPosition(traffic[i])
+    }
   }
   carCanvas.height = window.innerHeight;
-  networkCanvas.height = window.innerHeight;
+  networkCanvas.height = window.innerHeight - 300;
 
   bestCar = cars.find(c => c.y == Math.min(...cars.map(c => c.y)));
 
@@ -107,11 +99,17 @@ function generateTraffic(N) {
   for (let i = 0; i < N; i++) {
     traffic.push(new Car(
       road.getLaneCenter(Math.floor(Math.random() * 3)),
-      -Math.floor(Math.random() * 3000),
+      -Math.floor(Math.random() * 3000) - bestCar.y,
       30,
       50,
       "DUMMY"
     ));
   }
   return traffic;
+}
+
+function generateTrafficCarRandomPosition(trafficCar) {
+  trafficCar.y = bestCar.y - window.innerHeight - Math.floor(Math.random() * window.innerHeight);
+  trafficCar.x = road.getLaneCenter(Math.floor(Math.random() * 3));
+  trafficCar.maxSpeed = Math.random() * 5 + 1;
 }
