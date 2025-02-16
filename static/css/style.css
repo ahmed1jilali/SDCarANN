@@ -3,7 +3,9 @@ body {
   padding: 0;
   background-color: darkgray;
   overflow: hidden;
-  text-align: center;
+  display: flex;
+  justify-items: center;
+  align-items: center;
 }
 
 #carCanvas {
@@ -12,4 +14,22 @@ body {
 
 #networkCanvas {
   background: black;
+}
+
+#verticalButtons {
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0.5em;
+}
+
+button:hover {
+  background-color: wheat;
 }
